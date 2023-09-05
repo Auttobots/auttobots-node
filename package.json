@@ -1,7 +1,10 @@
 {
-  "name": "@auttobots/auttobots",
+  "name": "@auttobots/core",
   "version": "0.2.2",
-  "description": "Auttobots NodeJS Library",
+  "description": "Auttobots Node.js Library",
+  "repository": {
+    "url": "https://github.com/Auttobots/auttobots-node"
+  },
   "homepage": "https://www.auttobots.com",
   "main": "dist/index.js",
   "type": "commonjs",

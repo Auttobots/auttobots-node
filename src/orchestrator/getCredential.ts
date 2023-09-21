@@ -1,27 +1,22 @@
-import { OrchestratorCredential, OrchetratorCredentialRequest, RequestType, CustomError } from "./types";
+import { requestCredentialForUnix } from "./communication/unixStrategy";
+import { requestCredentialForWindows } from "./communication/windowsStrategy";
+import { OrchestratorCredential, CustomError } from "./types";
+import os from 'node:os';
 
-const getCredential = (assetName: string, timeout: number = 5000): Promise<OrchestratorCredential | Error> => new Promise((resolve, reject) => {
-  if (typeof String === 'string' || assetName?.trim() === '') throw new Error(CustomError.INVALID_ASSET_NAME);
+const getCredential = async (assetName: string, timeout?: number): Promise<OrchestratorCredential> => {
+  const platform: NodeJS.Platform = os.platform();
 
-  if (process) {
-    process.on('message', (credential: OrchestratorCredential) => {
-      resolve(credential);
-    });
-
-    const request: OrchetratorCredentialRequest = {
-      requestType: RequestType.GET_ORCHESTRATOR_CREDENTIAL,
-      data: {
-        assetName,
-      },
-    }
-
-    if (process.send) {
-      process.send(request, null, {}, (error) => {
-        if (error) reject(new Error(CustomError.CLIENT_DISCONNECTED));
-      });
-    }
+  if (['darwin', 'linux'].includes(platform)) {
+    const credential = await requestCredentialForUnix(assetName, timeout);
+    return credential;
   }
-  setTimeout(() => reject(new Error(CustomError.TIMEOUT_EXCEEDED)), timeout)
-});
+
+  if (platform === 'win32') {
+    const credential = await requestCredentialForWindows(assetName, timeout);
+    return credential;
+  }
+
+  throw new Error(CustomError.INVALID_OS_ERROR);
+};
 
 export { getCredential };

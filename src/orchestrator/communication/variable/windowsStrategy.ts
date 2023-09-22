@@ -22,7 +22,7 @@ const authenticateWithNamedPipe = async (): Promise<{ status: AuthenticationStat
 
     client.on('error', (error) => {
       // console.error('Error connecting to the named pipe:', error);
-      throw error;
+      reject(error);
     });
 
     client.on('data', (data) => {
@@ -48,7 +48,7 @@ const authenticateWithNamedPipe = async (): Promise<{ status: AuthenticationStat
       reject(error);
     }
 
-    reject(new Error(CustomError.CONNECTION_ERROR));
+    reject(error);
   }
 });
 

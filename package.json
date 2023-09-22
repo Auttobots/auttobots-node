@@ -1,6 +1,6 @@
 {
   "name": "@auttobots/core",
-  "version": "0.3.0-beta.3",
+  "version": "0.3.0-beta.4",
   "description": "Auttobots Node.js Library",
   "repository": {
     "url": "https://github.com/Auttobots/auttobots-node"

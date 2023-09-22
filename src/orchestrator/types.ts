@@ -14,11 +14,30 @@ interface OrchetratorCredentialRequest extends ParentProcessRequest {
   },
 }
 
+interface OrchetratorVariableRequest extends ParentProcessRequest {
+  data: {
+    key: string,
+  },
+}
+
 type OrchestratorCredential = {
   name: string,
   description: string,
   username: string,
   password: string,
+}
+
+enum VariableType {
+  STRING = 'string',
+  NUMBER = 'number',
+  BOOLEAN = 'boolean',
+}
+
+type OrchestratorVariable = {
+  key: string,
+  description: string,
+  type: VariableType,
+  value: string,
 }
 
 enum CustomError {
@@ -38,9 +57,12 @@ enum AuthenticationStatus {
 
 export {
   OrchestratorCredential,
-  OrchetratorCredentialRequest,
   ParentProcessRequest,
+  OrchetratorCredentialRequest,
+  OrchetratorVariableRequest,
   RequestType,
+  VariableType,
+  OrchestratorVariable,
   CustomError,
   AuthenticationStatus,
 };

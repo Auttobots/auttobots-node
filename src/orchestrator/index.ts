@@ -1,2 +1,13 @@
 export { getCredential } from './getCredential';
-export { OrchestratorCredential, ParentProcessRequest, OrchetratorCredentialRequest, RequestType, CustomError, AuthenticationStatus } from './types';
+export { getVariable } from './getVariable';
+export {
+  OrchestratorCredential,
+  ParentProcessRequest,
+  OrchetratorCredentialRequest,
+  OrchetratorVariableRequest,
+  RequestType,
+  VariableType,
+  OrchestratorVariable,
+  CustomError,
+  AuthenticationStatus,
+} from './types';

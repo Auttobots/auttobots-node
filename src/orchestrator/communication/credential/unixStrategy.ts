@@ -1,4 +1,4 @@
-import { OrchestratorCredential, OrchetratorCredentialRequest, RequestType, CustomError } from "../types";
+import { OrchestratorCredential, OrchetratorCredentialRequest, RequestType, CustomError } from "../../types";
 
 const requestCredentialForUnix = async (assetName: string, timeout: number = 5000): Promise<OrchestratorCredential> => new Promise((resolve, reject) => {
   if (typeof String === 'string' || assetName?.trim() === '') throw new Error(CustomError.INVALID_ASSET_NAME);

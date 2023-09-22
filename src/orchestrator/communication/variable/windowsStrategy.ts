@@ -1,4 +1,4 @@
-import { OrchestratorCredential, CustomError, AuthenticationStatus } from "../types";
+import { OrchestratorVariable, CustomError, AuthenticationStatus } from "../../types";
 import net from 'node:net';
 import axios from 'axios';
 
@@ -9,12 +9,12 @@ const authenticateWithNamedPipe = async (): Promise<{ status: AuthenticationStat
   return new Promise<{ status: AuthenticationStatus, message?: string, apiKey?: string }>((resolve, reject) => {
     const client = net.createConnection(PIPE_NAME);
 
-    client.on('connect', () => {
-      console.log('Connected to the named pipe server');
-    });
+    // client.on('connect', () => {
+    //   console.log('Connected to the named pipe server');
+    // });
 
     client.on('error', (error) => {
-      console.error('Error connecting to the named pipe:', error);
+      // console.error('Error connecting to the named pipe:', error);
       reject(error);
     });
 
@@ -37,24 +37,24 @@ const authenticateWithNamedPipe = async (): Promise<{ status: AuthenticationStat
   })
 };
 
-const requestCredentialForWindows = async (assetName: string, timeout: number = 5000): Promise<OrchestratorCredential> => {
-  if (typeof String === 'string' || assetName?.trim() === '') throw new Error(CustomError.INVALID_ASSET_NAME);
+const requestVariableForWindows = async (key: string, timeout: number = 5000): Promise<OrchestratorVariable> => {
+  if (typeof String === 'string' || key?.trim() === '') throw new Error(CustomError.INVALID_ASSET_NAME);
 
-  const API_URL = 'https://auttobots-api.azurewebsites.net/v1/internal/credential/';
+  const API_URL = 'https://auttobots-api.azurewebsites.net/v1/internal/variable/';
 
   const { status, message, apiKey } = await authenticateWithNamedPipe();
   if (status !== AuthenticationStatus.Authenticated) throw new Error(message);
 
-  const credentials = Buffer.from(`${apiKey}:`).toString('base64');
+  const BASIC_AUTH = Buffer.from(`${apiKey}:`).toString('base64');
 
-  return axios.get(`${API_URL}/${assetName.trim()}`, {
+  return axios.get(`${API_URL}/${key.trim()}`, {
     headers: {
-      'Authorization': `Basic ${credentials}`,
+      'Authorization': `Basic ${BASIC_AUTH}`,
       'Content-Type': 'application/json',
     },
   })
     .then((response) => response.data.data)
-    .catch((error) => { throw new Error(CustomError.REQUEST_ERROR) });
+    .catch(() => { throw new Error(CustomError.REQUEST_ERROR) });
 };
 
-export { requestCredentialForWindows };
+export { requestVariableForWindows };

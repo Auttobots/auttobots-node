@@ -1,5 +1,5 @@
-import { requestCredentialForUnix } from "./communication/unixStrategy";
-import { requestCredentialForWindows } from "./communication/windowsStrategy";
+import { requestCredentialForUnix } from "./communication/credential/unixStrategy";
+import { requestCredentialForWindows } from "./communication/credential/windowsStrategy";
 import { OrchestratorCredential, CustomError } from "./types";
 import os from 'node:os';
 

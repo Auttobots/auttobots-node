@@ -1,6 +1,7 @@
 import { OrchestratorVariable, CustomError, AuthenticationStatus } from "../../types";
 import net from 'node:net';
 import axios from 'axios';
+import { convertVariableValue } from "./_utils";
 
 
 const authenticateWithNamedPipe = async (): Promise<{ status: AuthenticationStatus, message?: string, apiKey?: string }> => {
@@ -53,7 +54,11 @@ const requestVariableForWindows = async (key: string, timeout: number = 5000): P
       'Content-Type': 'application/json',
     },
   })
-    .then((response) => response.data.data)
+    .then((response) => {
+      const variable: OrchestratorVariable = response.data.data;
+      const convertedVariable = convertVariableValue(variable);
+      return convertedVariable;
+    })
     .catch(() => { throw new Error(CustomError.REQUEST_ERROR) });
 };
 

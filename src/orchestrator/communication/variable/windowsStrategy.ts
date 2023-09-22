@@ -16,7 +16,7 @@ const authenticateWithNamedPipe = async (): Promise<{ status: AuthenticationStat
 
     client.on('error', (error) => {
       // console.error('Error connecting to the named pipe:', error);
-      reject(error);
+      reject(new Error(CustomError.CLIENT_DISCONNECTED));
     });
 
     client.on('data', (data) => {

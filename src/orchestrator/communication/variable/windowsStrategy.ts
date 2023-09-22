@@ -19,7 +19,7 @@ const requestVariableForWindows = async (key: string, timeout: number = 5000): P
     },
   })
     .then((response) => {
-      const variable: OrchestratorVariable = response.data.data;
+      const variable: OrchestratorVariable = response.data;
       const convertedVariable = convertVariableValue(variable);
       return convertedVariable;
     })

@@ -18,7 +18,7 @@ const requestCredentialForWindows = async (assetName: string, timeout: number = 
       'Content-Type': 'application/json',
     },
   })
-    .then((response) => response.data.data)
+    .then((response) => response.data)
     .catch((error) => { throw new Error(CustomError.REQUEST_ERROR) });
 };
 

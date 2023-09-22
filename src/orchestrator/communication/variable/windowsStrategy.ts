@@ -4,11 +4,17 @@ import axios from 'axios';
 import { convertVariableValue } from "./_utils";
 
 
-const authenticateWithNamedPipe = async (): Promise<{ status: AuthenticationStatus, message?: string, apiKey?: string }> => {
+const authenticateWithNamedPipe = async (): Promise<{ status: AuthenticationStatus, message?: string, apiKey?: string }> => new Promise((resolve, reject) => {
   const PIPE_NAME = '\\\\.\\pipe\\AuttobotsRunSessionChecker';
 
-  return new Promise<{ status: AuthenticationStatus, message?: string, apiKey?: string }>((resolve, reject) => {
-    const client = net.createConnection(PIPE_NAME);
+  try {
+    let client: net.Socket;
+
+    try {
+      client = net.createConnection(PIPE_NAME);
+    } catch {
+      throw new Error(CustomError.CLIENT_DISCONNECTED);
+    }
 
     // client.on('connect', () => {
     //   console.log('Connected to the named pipe server');
@@ -16,12 +22,14 @@ const authenticateWithNamedPipe = async (): Promise<{ status: AuthenticationStat
 
     client.on('error', (error) => {
       // console.error('Error connecting to the named pipe:', error);
-      reject(new Error(CustomError.CLIENT_DISCONNECTED));
+      throw error;
     });
 
     client.on('data', (data) => {
       const auth = data.toString().trim();
-      console.log('Received data from server:', auth);
+      // console.log('Received data from server:', auth);
+
+      client.end();
 
       if (!auth) {
         resolve({ status: AuthenticationStatus.Unauthenticated, message: 'No se pudieron obtener correctamente los datos de sesión activa' });
@@ -29,14 +37,20 @@ const authenticateWithNamedPipe = async (): Promise<{ status: AuthenticationStat
         resolve({ status: AuthenticationStatus.Authenticated, apiKey: auth });
       }
 
-      client.end();
     });
 
     client.on('end', () => {
-      console.log('Disconnected from the named pipe server');
+      // console.log('Disconnected from the named pipe server');
     });
-  })
-};
+
+  } catch (error) {
+    if (error instanceof Error && error.message === CustomError.CLIENT_DISCONNECTED) {
+      reject(error);
+    }
+
+    reject(new Error(CustomError.CONNECTION_ERROR));
+  }
+});
 
 const requestVariableForWindows = async (key: string, timeout: number = 5000): Promise<OrchestratorVariable> => {
   if (typeof String === 'string' || key?.trim() === '') throw new Error(CustomError.INVALID_ASSET_NAME);

@@ -4,27 +4,27 @@ enum RequestType {
 }
 
 interface ParentProcessRequest {
-  requestType: RequestType,
-  data: object,
+  requestType: RequestType;
+  data: object;
 }
 
 interface OrchetratorCredentialRequest extends ParentProcessRequest {
   data: {
     assetName: string,
-  },
+  };
 }
 
 interface OrchetratorVariableRequest extends ParentProcessRequest {
   data: {
     key: string,
-  },
+  };
 }
 
 type OrchestratorCredential = {
-  name: string,
-  description: string,
-  username: string,
-  password: string,
+  name: string;
+  description: string;
+  username: string;
+  password: string;
 }
 
 enum VariableType {
@@ -33,15 +33,21 @@ enum VariableType {
   BOOLEAN = 'boolean',
 }
 
+type VariableValueType =
+  | string
+  | number
+  | boolean
+
 type OrchestratorVariable = {
-  key: string,
-  description: string,
-  type: VariableType,
-  value: string,
+  key: string;
+  description: string;
+  type: VariableType;
+  value: VariableValueType;
 }
 
 enum CustomError {
   INVALID_ASSET_NAME = 'INVALID_ASSET_NAME',
+  INVALID_ASSET_FORMAT = 'INVALID_ASSET_FORMAT',
   TIMEOUT_EXCEEDED = 'TIMEOUT_EXCEEDED',
   CLIENT_DISCONNECTED = 'CLIENT_DISCONNECTED',
   CONNECTION_ERROR = 'CONNECTION_ERROR',

@@ -5,15 +5,17 @@ const requestVariableForUnix = async (key: string, timeout: number = 5000): Prom
   if (typeof String === 'string' || key?.trim() === '') throw new Error(CustomError.INVALID_ASSET_NAME);
 
   if (process) {
-    process.on('message', (response: OrchestratorVariable | Error) => {
-      if (response instanceof Error) {
-        if (response.message === CustomError.ASSET_NOT_FOUND) reject(new Error(CustomError.ASSET_NOT_FOUND));
+    process.on('message', (response: OrchestratorVariable | string) => {
+      if (typeof response === "string" && response === CustomError.ASSET_NOT_FOUND) {
+        reject(new Error(CustomError.ASSET_NOT_FOUND));
+      }
 
-        reject(new Error(CustomError.REQUEST_ERROR));
-      } else {
+      if (typeof response === "object") {
         const convertedVariable = convertVariableValue(response);
         resolve(convertedVariable);
       }
+
+      reject(new Error(CustomError.REQUEST_ERROR));
     });
 
     const request: OrchetratorVariableRequest = {

@@ -4,14 +4,15 @@ const requestCredentialForUnix = async (assetName: string, timeout: number = 500
   if (typeof String === 'string' || assetName?.trim() === '') throw new Error(CustomError.INVALID_ASSET_NAME);
 
   if (process) {
-    process.on('message', (response: OrchestratorCredential | Error) => {
-      if (response instanceof Error) {
-        if (response.message === CustomError.ASSET_NOT_FOUND) reject(new Error(CustomError.ASSET_NOT_FOUND));
-
-        reject(new Error(CustomError.REQUEST_ERROR));
-      } else {
+    process.on('message', (response: OrchestratorCredential | string) => {
+      if (typeof response === "string" && response === CustomError.ASSET_NOT_FOUND) {
+        reject(new Error(CustomError.ASSET_NOT_FOUND));
+      }
+      if (typeof response === "object") {
         resolve(response);
       }
+
+      reject(new Error(CustomError.REQUEST_ERROR));
     });
 
     const request: OrchetratorCredentialRequest = {

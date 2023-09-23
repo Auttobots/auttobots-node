@@ -1,5 +1,5 @@
 import { OrchestratorCredential, CustomError, AuthenticationStatus } from "../../types";
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { authenticateWithNamedPipe } from "../variable/_utils";
 
 const requestCredentialForWindows = async (assetName: string, timeout: number = 5000): Promise<OrchestratorCredential> => {
@@ -19,7 +19,13 @@ const requestCredentialForWindows = async (assetName: string, timeout: number = 
     },
   })
     .then((response) => response.data)
-    .catch((error) => { throw new Error(CustomError.REQUEST_ERROR) });
+    .catch((error) => {
+      if (error instanceof AxiosError && error.response?.status === 404) {
+        throw new Error(CustomError.ASSET_NOT_FOUND);
+      }
+
+      throw new Error(CustomError.REQUEST_ERROR);
+    });
 };
 
 export { requestCredentialForWindows };

@@ -1,5 +1,5 @@
 import { OrchestratorVariable, CustomError, AuthenticationStatus } from "../../types";
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { convertVariableValue, authenticateWithNamedPipe } from "./_utils";
 
 const requestVariableForWindows = async (key: string, timeout: number = 5000): Promise<OrchestratorVariable> => {
@@ -23,7 +23,13 @@ const requestVariableForWindows = async (key: string, timeout: number = 5000): P
       const convertedVariable = convertVariableValue(variable);
       return convertedVariable;
     })
-    .catch(() => { throw new Error(CustomError.REQUEST_ERROR) });
+    .catch((error) => {
+      if (error instanceof AxiosError && error.response?.status === 404) {
+        throw new Error(CustomError.ASSET_NOT_FOUND);
+      }
+
+      throw new Error(CustomError.REQUEST_ERROR);
+    });
 };
 
 export { requestVariableForWindows };

@@ -6,7 +6,7 @@ enum RequestType {
 interface ParentProcessRequest {
   requestType: RequestType;
   data: object;
-  timestamp: Date;
+  timestamp: number;
 }
 
 interface OrchetratorCredentialRequest extends ParentProcessRequest {
@@ -24,13 +24,13 @@ interface OrchetratorVariableRequest extends ParentProcessRequest {
 interface OrchetratorCredentialResponse {
   data: OrchestratorCredential | null;
   error: string | null;
-  timestamp: Date;
+  timestamp: number;
 }
 
 interface OrchetratorVariableResponse {
   data: OrchestratorVariable | null;
   error: string | null;
-  timestamp: Date;
+  timestamp: number;
 }
 
 type OrchestratorCredential = {

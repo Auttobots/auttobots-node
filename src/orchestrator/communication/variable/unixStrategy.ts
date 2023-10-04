@@ -4,13 +4,13 @@ import { convertVariableValue } from "./_utils";
 const requestVariableForUnix = async (key: string, timeout: number = 5000): Promise<OrchestratorVariable> => new Promise((resolve, reject) => {
   if (typeof key !== 'string' || key?.trim() === '') throw new Error(CustomError.INVALID_ASSET_NAME);
 
-  const uniqueTimestamp = new Date();
+  const uniqueTimestamp = new Date().getTime();
 
   if (process) {
     process.on('message', (response: OrchetratorVariableResponse) => {
       const { data, error, timestamp } = response;
 
-      if (typeof error && error === CustomError.ASSET_NOT_FOUND) {
+      if (error && error === CustomError.ASSET_NOT_FOUND && timestamp === uniqueTimestamp) {
         reject(new Error(CustomError.ASSET_NOT_FOUND));
       }
 

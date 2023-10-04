@@ -3,13 +3,13 @@ import { OrchestratorCredential, OrchetratorCredentialRequest, RequestType, Cust
 const requestCredentialForUnix = async (assetName: string, timeout: number = 5000): Promise<OrchestratorCredential> => new Promise((resolve, reject) => {
   if (typeof assetName !== 'string' || assetName?.trim() === '') throw new Error(CustomError.INVALID_ASSET_NAME);
 
-  const uniqueTimestamp = new Date();
+  const uniqueTimestamp = new Date().getTime();
 
   if (process) {
     process.on('message', (response: OrchetratorCredentialResponse) => {
       const { data, error, timestamp } = response;
 
-      if (typeof error && error === CustomError.ASSET_NOT_FOUND) {
+      if (error && error === CustomError.ASSET_NOT_FOUND && timestamp === uniqueTimestamp) {
         reject(new Error(CustomError.ASSET_NOT_FOUND));
       }
       if (data && timestamp === uniqueTimestamp) {

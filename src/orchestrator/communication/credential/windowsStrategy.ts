@@ -3,7 +3,7 @@ import axios, { AxiosError } from 'axios';
 import { authenticateWithNamedPipe } from "../variable/_utils";
 
 const requestCredentialForWindows = async (assetName: string, timeout: number = 5000): Promise<OrchestratorCredential> => {
-  if (typeof String === 'string' || assetName?.trim() === '') throw new Error(CustomError.INVALID_ASSET_NAME);
+  if (typeof assetName !== 'string' || assetName?.trim() === '') throw new Error(CustomError.INVALID_ASSET_NAME);
 
   const API_URL = 'https://auttobots-api.azurewebsites.net/v1/internal/credential/';
 

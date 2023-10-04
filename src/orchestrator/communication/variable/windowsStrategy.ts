@@ -3,7 +3,7 @@ import axios, { AxiosError } from 'axios';
 import { convertVariableValue, authenticateWithNamedPipe } from "./_utils";
 
 const requestVariableForWindows = async (key: string, timeout: number = 5000): Promise<OrchestratorVariable> => {
-  if (typeof String === 'string' || key?.trim() === '') throw new Error(CustomError.INVALID_ASSET_NAME);
+  if (typeof key !== 'string' || key?.trim() === '') throw new Error(CustomError.INVALID_ASSET_NAME);
 
   const API_URL = 'https://auttobots-api.azurewebsites.net/v1/internal/variable/';
 

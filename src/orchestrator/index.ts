@@ -5,6 +5,8 @@ export {
   ParentProcessRequest,
   OrchetratorCredentialRequest,
   OrchetratorVariableRequest,
+  OrchetratorCredentialResponse,
+  OrchetratorVariableResponse,
   RequestType,
   VariableType,
   OrchestratorVariable,

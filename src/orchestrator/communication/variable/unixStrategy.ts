@@ -1,21 +1,27 @@
-import { OrchestratorVariable, OrchetratorVariableRequest, RequestType, CustomError } from "../../types";
+import { OrchestratorVariable, OrchetratorVariableRequest, RequestType, CustomError, OrchetratorVariableResponse } from "../../types";
 import { convertVariableValue } from "./_utils";
 
 const requestVariableForUnix = async (key: string, timeout: number = 5000): Promise<OrchestratorVariable> => new Promise((resolve, reject) => {
-  if (typeof String === 'string' || key?.trim() === '') throw new Error(CustomError.INVALID_ASSET_NAME);
+  if (typeof key !== 'string' || key?.trim() === '') throw new Error(CustomError.INVALID_ASSET_NAME);
+
+  const uniqueTimestamp = new Date();
 
   if (process) {
-    process.on('message', (response: OrchestratorVariable | string) => {
-      if (typeof response === "string" && response === CustomError.ASSET_NOT_FOUND) {
+    process.on('message', (response: OrchetratorVariableResponse) => {
+      const { data, error, timestamp } = response;
+
+      if (typeof error && error === CustomError.ASSET_NOT_FOUND) {
         reject(new Error(CustomError.ASSET_NOT_FOUND));
       }
 
-      if (typeof response === "object") {
-        const convertedVariable = convertVariableValue(response);
+      if (data && timestamp === uniqueTimestamp) {
+        const convertedVariable = convertVariableValue(data);
         resolve(convertedVariable);
       }
 
-      reject(new Error(CustomError.REQUEST_ERROR));
+      if (data === null && timestamp === uniqueTimestamp) {
+        reject(new Error(CustomError.REQUEST_ERROR));
+      }
     });
 
     const request: OrchetratorVariableRequest = {
@@ -23,6 +29,7 @@ const requestVariableForUnix = async (key: string, timeout: number = 5000): Prom
       data: {
         key,
       },
+      timestamp: uniqueTimestamp,
     }
 
     if (process.send) {

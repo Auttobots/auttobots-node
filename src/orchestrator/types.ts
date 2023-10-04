@@ -6,6 +6,7 @@ enum RequestType {
 interface ParentProcessRequest {
   requestType: RequestType;
   data: object;
+  timestamp: Date;
 }
 
 interface OrchetratorCredentialRequest extends ParentProcessRequest {
@@ -18,6 +19,18 @@ interface OrchetratorVariableRequest extends ParentProcessRequest {
   data: {
     key: string,
   };
+}
+
+interface OrchetratorCredentialResponse {
+  data: OrchestratorCredential | null;
+  error: string | null;
+  timestamp: Date;
+}
+
+interface OrchetratorVariableResponse {
+  data: OrchestratorVariable | null;
+  error: string | null;
+  timestamp: Date;
 }
 
 type OrchestratorCredential = {
@@ -67,6 +80,8 @@ export {
   ParentProcessRequest,
   OrchetratorCredentialRequest,
   OrchetratorVariableRequest,
+  OrchetratorCredentialResponse,
+  OrchetratorVariableResponse,
   RequestType,
   VariableType,
   OrchestratorVariable,

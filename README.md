@@ -25,13 +25,13 @@ This library includes all the necessary modules and utilities for developing Nod
 #### Install the latest version with any package manager.
 
 ```bash
-npm install @auttobots/auttobots
+npm install @auttobots/core
 
 # or
 
-yarn add @auttobots/auttobots
+yarn add @auttobots/core
 
 # or
 
-pnpm add @auttobots/auttobots
+pnpm add @auttobots/core
 ```
